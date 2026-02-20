@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Song School AI 🎶</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Fredoka+One&display=swap');
+        
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFD93D;
+            --bg: #F8F9FA;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(135deg, #E0F7FA 0%, #FFF3E0 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-family: 'Fredoka One', sans-serif;
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #FFD93D, #FF9FF3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .nav-btn {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.15);
+        }
+        
+        .section {
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 25px;
+            padding: 25px 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card:hover {
+            transform: scale(1.08) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .letter {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .emoji {
+            font-size: 4.5rem;
+            margin: 10px 0;
+        }
+        
+        .note {
+            font-size: 5rem;
+            margin: 10px 0;
+        }
+        
+        .shape {
+            width: 120px;
+            height: 120px;
+            margin: 15px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .square { border-radius: 15px; }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 110px solid #FF6B6B;
+            margin: 15px auto;
+        }
+        
+        .color-box {
+            width: 130px;
+            height: 130px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        button.big {
+            padding: 18px 40px;
+            font-size: 1.6rem;
+            margin: 15px;
+            border: none;
+            border-radius: 50px;
+            background: var(--accent);
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        button.big:hover {
+            transform: scale(1.1);
+        }
+        
+        .quiz-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        .question {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 40px;
+            min-height: 100px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .option-btn {
+            padding: 25px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 20px;
+            background: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-btn:hover {
+            background: #FFD93D;
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 30px 0;
+            min-height: 80px;
+        }
+        
+        .score {
+            font-size: 3rem;
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .back-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            padding: 15px 30px;
+            font-size: 1.4rem;
+            background: white;
+            border: 3px solid #FF6B6B;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 200;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎵 Song School AI 🎶</h1>
+        <p class="subtitle">Sing, learn & dance — made for ages 3-7!</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn" onclick="showSection('home')">🏠 Home</button>
+        <button class="nav-btn" onclick="showSection('letters')">🔠 ABC Song</button>
+        <button class="nav-btn" onclick="showSection('numbers')">🔢 Counting Songs</button>
+        <button class="nav-btn" onclick="showSection('shapes')">🔷 Shape Rhythms</button>
+        <button class="nav-btn" onclick="showSection('colors')">🌈 Color Melodies</button>
+        <button class="nav-btn" onclick="startQuiz()">🎤 Sing-Along Quiz!</button>
+    </nav>
+
+    <!-- HOME -->
+    <div id="home" class="section active">
+        <div style="text-align:center; padding:60px 20px;">
+            <h2 style="font-size:3.5rem; margin-bottom:30px;">Hello, Little Singer! 🎤✨</h2>
+            <p style="font-size:1.8rem; max-width:700px; margin:0 auto 40px;">
+                Tap any button to start singing & learning!<br>
+                Listen to the songs, tap the cards, and let's make music!
+            </p>
+            <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:20px;">
+                <img src="https://picsum.photos/id/1015/300/200" alt="Happy kids singing" style="border-radius:25px; box-shadow:0 15px 30px rgba(0,0,0,0.2);">
+                <img src="https://picsum.photos/id/237/300/200" alt="Kids with music" style="border-radius:25px; box-shadow:0 15px 30px rgba(0,0,0,0.2);">
+            </div>
+        </div>
+    </div>
+
+    <!-- LETTERS -->
+    <div id="letters" class="section">
+        <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🔠 ABC Song Time!</h2>
+        <div class="grid" id="letters-grid"></div>
+    </div>
+
+    <!-- NUMBERS -->
+    <div id="numbers" class="section">
+        <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🔢 Counting Rhymes</h2>
+        <div class="grid" id="numbers-grid"></div>
+    </div>
+
+    <!-- SHAPES -->
+    <div id="shapes" class="section">
+        <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🔷 Shape Dance Party</h2>
+        <div class="grid" id="shapes-grid"></div>
+    </div>
+
+    <!-- COLORS -->
+    <div id="colors" class="section">
+        <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🌈 Color Song Rainbow</h2>
+        <div class="grid" id="colors-grid"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="section">
+        <div class="quiz-container">
+            <div id="quiz-progress" style="text-align:center; font-size:1.5rem; margin-bottom:20px;"></div>
+            <div id="question" class="question"></div>
+            <div id="options" class="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div style="text-align:center;">
+                <button class="big" id="next-btn" onclick="nextQuestion()" style="display:none;">Next Song →</button>
+            </div>
+            <div id="score-screen" style="display:none; text-align:center;">
+                <div id="final-score" class="score"></div>
+                <button class="big" onclick="restartQuiz()">Sing Again 🎵</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="showSection('home')">← Back to Home</button>
+
+    <footer>
+        Made with ❤️ & music for curious little singers • Open source on GitHub • Powered by your browser's voice
+    </footer>
+
+    <canvas id="confetti" class="confetti"></canvas>
+
+    <script>
+        // Speech synthesis
+        let voices = [];
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.pitch = 1.3;
+                utterance.rate = 1.0;
+                utterance.volume = 1.0;
+                const kidVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Karen') || v.lang.includes('en'));
+                if (kidVoice) utterance.voice = kidVoice;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        window.speechSynthesis.onvoiceschanged = () => {
+            voices = window.speechSynthesis.getVoices();
+        };
+        window.speechSynthesis.getVoices();
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            if (id === 'letters') renderLetters();
+            if (id === 'numbers') renderNumbers();
+            if (id === 'shapes') renderShapes();
+            if (id === 'colors') renderColors();
+        }
+
+        // Letters — now with song theme
+        const lettersData = [
+            {l:'A', w:'Apple song', e:'🍎🎵'}, {l:'B', w:'Bouncing ball', e:'⚽🎶'}, {l:'C', w:'Cat meow melody', e:'🐱🎤'},
+            {l:'D', w:'Doggy dance', e:'🐶🕺'}, {l:'E', w:'Elephant trumpet tune', e:'🐘🎺'}, {l:'F', w:'Fish swim song', e:'🐟🌊'},
+            {l:'G', w:'Grape jump jingle', e:'🍇🎵'}, {l:'H', w:'Happy house harmony', e:'🏠🎼'}, {l:'I', w:'Ice cream chant', e:'🍦🍦'},
+            {l:'J', w:'Jungle beat', e:'🌴🥁'}, {l:'K', w:'Kangaroo hop song', e:'🦘🦘'}, {l:'L', w:'Lion roar rhythm', e:'🦁🔊'},
+            {l:'M', w:'Monkey swing tune', e:'🐵🎶'}, {l:'N', w:'Nest lullaby', e:'🪹🌙'}, {l:'O', w:'Octopus wiggle', e:'🐙🌀'},
+            {l:'P', w:'Pizza party song', e:'🍕🎉'}, {l:'Q', w:'Queen crown chorus', e:'👑🎤'}, {l:'R', w:'Rainbow rhyme', e:'🌈🎵'},
+            {l:'S', w:'Sunshine song', e:'☀️🎶'}, {l:'T', w:'Tiger growl groove', e:'🐯🎸'}, {l:'U', w:'Umbrella rain rap', e:'☂️💦'},
+            {l:'V', w:'Volcano boom beat', e:'🌋🥁'}, {l:'W', w:'Whale ocean song', e:'🐳🌊'}, {l:'X', w:'Xylophone xyl', e:'🎹✨'},
+            {l:'Y', w:'Yogurt yum yodel', e:'🥛🎵'}, {l:'Z', w:'Zebra stripe rhythm', e:'🦓🎶'}
+        ];
+
+        function renderLetters() {
+            const grid = document.getElementById('letters-grid');
+            grid.innerHTML = '';
+            lettersData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="letter" style="color:#FF6B6B;">${item.l}</div>
+                    <div class="emoji">${item.e}</div>
+                    <div style="font-size:1.4rem; margin-top:10px;">${item.w}</div>
+                `;
+                card.onclick = () => {
+                    speak(`Sing with me: ${item.l} is for ${item.w}!`);
+                    card.style.transform = 'scale(1.2)';
+                    setTimeout(() => card.style.transform = '', 300);
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        // Numbers — counting songs
+        function renderNumbers() {
+            const grid = document.getElementById('numbers-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i <= 10; i++) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                let notes = '♪'.repeat(Math.min(i, 5));
+                card.innerHTML = `
+                    <div style="font-size:6rem; font-weight:700; color:#4ECDC4;">${i}</div>
+                    <div style="font-size:3rem; margin:15px 0;">${notes}</div>
+                    <div style="font-size:1.3rem;">Sing the count!</div>
+                `;
+                card.onclick = () => {
+                    speak(`Let's count to ${i} with a song!`);
+                    if (i > 0) {
+                        let count = 0;
+                        const int = setInterval(() => {
+                            speak(count + 1);
+                            count++;
+                            if (count >= i) clearInterval(int);
+                        }, 600);
+                    }
+                };
+                grid.appendChild(card);
+            }
+        }
+
+        // Shapes — rhythm/shape songs
+        const shapesData = [
+            {name:'Circle', color:'#FF6B6B', emoji:'🔴', css:'border-radius:50%; background:#FF6B6B;'},
+            {name:'Square', color:'#4ECDC4', emoji:'🟩', css:'background:#4ECDC4; border-radius:15px;'},
+            {name:'Triangle', color:'#FFD93D', emoji:'🔺', css:''},
+            {name:'Rectangle', color:'#6C5CE7', emoji:'🟦', css:'background:#6C5CE7; width:140px; height:90px; border-radius:10px;'},
+            {name:'Star', color:'#FF9FF3', emoji:'⭐', css:''}
+        ];
+
+        function renderShapes() {
+            const grid = document.getElementById('shapes-grid');
+            grid.innerHTML = '';
+            shapesData.forEach(shape => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                let shapeHTML = '';
+                if (shape.name === 'Triangle') {
+                    shapeHTML = `<div class="triangle" style="border-bottom-color:${shape.color};"></div>`;
+                } else if (shape.name === 'Star') {
+                    shapeHTML = `<div style="font-size:6rem;">${shape.emoji}</div>`;
+                } else {
+                    shapeHTML = `<div class="shape" style="${shape.css}"></div>`;
+                }
+                card.innerHTML = `
+                    ${shapeHTML}
+                    <div style="font-size:1.8rem; font-weight:700; margin-top:15px;">${shape.name}</div>
+                `;
+                card.onclick = () => {
+                    speak(`Sing the ${shape.name.toLowerCase()} song! Roll roll roll around...`);
+                };
+                grid.appendChild(card);
+            });
+        }
+
+        // Colors — color songs
+        const colorsData = [
+            {name:'Red', hex:'#FF6B6B', emoji:'❤️🎵'},
+            {name:'Blue', hex:'#4ECDC4', emoji:'💙🎶'},
+            {name:'Yellow', hex:'#FFD93D', emoji:'💛✨'},
+            {name:'Green', hex:'#6C5CE7', emoji:'💚🎤'},
+            {name:'Purple', hex:'#A55EEA', emoji:'💜🎼'},
+            {name:'Orange', hex:'#FF9F43', emoji:'🧡🥁'}
+        ];
+
+        function renderColors() {
+            const grid = document.getElementById('colors-grid');
+            grid.innerHTML = '';
+            colorsData.forEach(color => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="color-box" style="background:${color.hex};"></div>
+                    <div style="font-size:1.8rem; margin-top:20px; font-weight:700;">${color.name}</div>
+                    <div style="font-size:3rem; margin-top:10px;">${color.emoji}</div>
+                `;
+                card.onclick = () => speak(`Sing the ${color.name.toLowerCase()} song! ${color.name} ${color.name} hooray!`);
+                grid.appendChild(card);
+            });
+        }
+
+        // Quiz data — now music/song themed
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let quizQuestions = [];
+
+        function generateQuizQuestions() {
+            return [
+                {
+                    q: "What letter starts the ABC song? 🎵",
+                    options: ["B", "A", "C"],
+                    answer: "A"
+                },
+                {
+                    q: "How many beats in this count? 1-2-3-4 🎶",
+                    options: ["3", "4", "5"],
+                    answer: "4"
+                },
+                {
+                    q: "What shape rolls like a ball? 🔴",
+                    options: ["Square", "Triangle", "Circle"],
+                    answer: "Circle"
+                },
+                {
+                    q: "What color is happy sunshine? ☀️",
+                    options: ["Blue", "Yellow", "Red"],
+                    answer: "Yellow"
+                },
+                {
+                    q: "What comes after do-re-mi? 🎤",
+                    options: ["fa", "la", "so"],
+                    answer: "fa"
+                }
+            ];
+        }
+
+        function startQuiz() {
+            quizQuestions = generateQuizQuestions();
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz').classList.add('active');
+            document.querySelectorAll('.section').forEach(s => {
+                if (s.id !== 'quiz') s.classList.remove('active');
+            });
+            document.getElementById('score-screen').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-progress').innerHTML = `Song Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('question').innerHTML = q.q;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selected) {
+            const q = quizQuestions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const isCorrect = selected === q.answer;
+            
+            if (isCorrect) {
+                score++;
+                feedback.innerHTML = `🎉 Yay! Perfect note!`;
+                feedback.style.color = '#4ECDC4';
+                launchConfetti();
+                speak("Great singing! You got it!");
+            } else {
+                feedback.innerHTML = `😊 Almost! The right note is <strong>${q.answer}</strong>`;
+                feedback.style.color = '#FF6B6B';
+                speak(`The correct answer is ${q.answer}`);
+            }
+            
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === q.answer) btn.style.background = '#4ECDC4';
+                if (btn.textContent === selected && !isCorrect) btn.style.background = '#FF6B6B';
+            });
+            
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizQuestions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            const percent = Math.round((score / quizQuestions.length) * 100);
+            let message = '';
+            if (percent === 100) message = '🎤 SUPERSTAR SINGER!';
+            else if (percent >= 80) message = '🌟 Rock star level!';
+            else if (percent >= 60) message = '🎶 Great jam!';
+            else message = '🎵 Keep singing, superstar!';
+            
+            document.getElementById('final-score').innerHTML = `
+                ${message}<br>
+                You got <strong>${score}</strong> out of <strong>${quizQuestions.length}</strong> correct!<br>
+                <span style="font-size:5rem;">${'⭐🎵'.repeat(Math.ceil(percent/20))}</span>
+            `;
+            document.getElementById('score-screen').style.display = 'block';
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('next-btn').style.display = 'none';
+            speak(`You scored ${score} out of ${quizQuestions.length}! ${message}`);
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Confetti explosion
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const ctx = canvas.getContext('2d');
+            const colors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#6C5CE7', '#FF9FF3'];
+            let particles = [];
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height - canvas.height;
+                    this.size = Math.random() * 14 + 8;
+                    this.speed = Math.random() * 7 + 5;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.angle = Math.random() * 360;
+                }
+                update() {
+                    this.y += this.speed;
+                    this.angle += 8;
+                }
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.angle * Math.PI / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                    ctx.restore();
+                }
+            }
+            
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+            
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.update();
+                    p.draw();
+                    if (p.y > canvas.height) particles.splice(i, 1);
+                });
+                if (particles.length > 0 && frame < 140) {
+                    frame++;
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+            
+            setTimeout(() => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 5000);
+        }
+
+        // Init
+        window.onload = () => {
+            showSection('home');
+            setTimeout(() => {
+                voices = window.speechSynthesis.getVoices();
+            }, 1000);
+            
+            setTimeout(() => {
+                speak("Welcome to Song School AI! Let's sing and learn together!");
+            }, 800);
+        };
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
