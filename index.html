@@ -276,6 +276,7 @@
         <button class="nav-btn" onclick="showSection('shapes')">🔷 Shape Rhythms</button>
         <button class="nav-btn" onclick="showSection('colors')">🌈 Color Melodies</button>
         <button class="nav-btn" onclick="startQuiz()">🎤 Sing-Along Quiz!</button>
+        <button class="nav-btn" onclick="showSection('suno')">🎧 Make a Song!</button>
     </nav>
 
     <!-- HOME -->
@@ -334,6 +335,18 @@
         </div>
     </div>
 
+    <!-- SUNO AI SONG GENERATOR -->
+    <div id="suno" class="section">
+        <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🎵 Create Your Own Learning Song with AI!</h2>
+        <div style="max-width:700px; margin:0 auto; background:white; padding:30px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
+            <textarea id="userPrompt" placeholder="Tell me what song you want! Example: fun ABC song about colors and animals" rows="4" style="width:100%; padding:15px; font-size:1.3rem; border-radius:15px; border:2px solid #FFD93D;"></textarea>
+            <button class="big" onclick="createCustomSong()" style="margin-top:20px; background:#FF6B6B; color:white;">Make My Song! 🎤✨</button>
+            <div id="songStatus" style="margin:25px 0; font-size:1.6rem; text-align:center; min-height:60px;"></div>
+            <audio id="songPlayer" controls style="width:100%; margin-top:20px; display:none;"></audio>
+            <div id="lyricsDisplay" style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:15px; display:none; white-space:pre-wrap;"></div>
+        </div>
+    </div>
+
     <button class="back-btn" onclick="showSection('home')">← Back to Home</button>
 
     <footer>
@@ -372,7 +385,7 @@
             if (id === 'colors') renderColors();
         }
 
-        // Letters — now with song theme
+        // Letters data and render function (unchanged)
         const lettersData = [
             {l:'A', w:'Apple song', e:'🍎🎵'}, {l:'B', w:'Bouncing ball', e:'⚽🎶'}, {l:'C', w:'Cat meow melody', e:'🐱🎤'},
             {l:'D', w:'Doggy dance', e:'🐶🕺'}, {l:'E', w:'Elephant trumpet tune', e:'🐘🎺'}, {l:'F', w:'Fish swim song', e:'🐟🌊'},
@@ -405,7 +418,7 @@
             });
         }
 
-        // Numbers — counting songs
+        // Numbers render (unchanged)
         function renderNumbers() {
             const grid = document.getElementById('numbers-grid');
             grid.innerHTML = '';
@@ -433,7 +446,7 @@
             }
         }
 
-        // Shapes — rhythm/shape songs
+        // Shapes data and render (unchanged)
         const shapesData = [
             {name:'Circle', color:'#FF6B6B', emoji:'🔴', css:'border-radius:50%; background:#FF6B6B;'},
             {name:'Square', color:'#4ECDC4', emoji:'🟩', css:'background:#4ECDC4; border-radius:15px;'},
@@ -467,7 +480,7 @@
             });
         }
 
-        // Colors — color songs
+        // Colors data and render (unchanged)
         const colorsData = [
             {name:'Red', hex:'#FF6B6B', emoji:'❤️🎵'},
             {name:'Blue', hex:'#4ECDC4', emoji:'💙🎶'},
@@ -493,38 +506,18 @@
             });
         }
 
-        // Quiz data — now music/song themed
+        // Quiz logic (unchanged)
         let currentQuestionIndex = 0;
         let score = 0;
         let quizQuestions = [];
 
         function generateQuizQuestions() {
             return [
-                {
-                    q: "What letter starts the ABC song? 🎵",
-                    options: ["B", "A", "C"],
-                    answer: "A"
-                },
-                {
-                    q: "How many beats in this count? 1-2-3-4 🎶",
-                    options: ["3", "4", "5"],
-                    answer: "4"
-                },
-                {
-                    q: "What shape rolls like a ball? 🔴",
-                    options: ["Square", "Triangle", "Circle"],
-                    answer: "Circle"
-                },
-                {
-                    q: "What color is happy sunshine? ☀️",
-                    options: ["Blue", "Yellow", "Red"],
-                    answer: "Yellow"
-                },
-                {
-                    q: "What comes after do-re-mi? 🎤",
-                    options: ["fa", "la", "so"],
-                    answer: "fa"
-                }
+                { q: "What letter starts the ABC song? 🎵", options: ["B", "A", "C"], answer: "A" },
+                { q: "How many beats in this count? 1-2-3-4 🎶", options: ["3", "4", "5"], answer: "4" },
+                { q: "What shape rolls like a ball? 🔴", options: ["Square", "Triangle", "Circle"], answer: "Circle" },
+                { q: "What color is happy sunshine? ☀️", options: ["Blue", "Yellow", "Red"], answer: "Yellow" },
+                { q: "What comes after do-re-mi? 🎤", options: ["fa", "la", "so"], answer: "fa" }
             ];
         }
 
@@ -533,9 +526,7 @@
             currentQuestionIndex = 0;
             score = 0;
             document.getElementById('quiz').classList.add('active');
-            document.querySelectorAll('.section').forEach(s => {
-                if (s.id !== 'quiz') s.classList.remove('active');
-            });
+            document.querySelectorAll('.section').forEach(s => { if (s.id !== 'quiz') s.classList.remove('active'); });
             document.getElementById('score-screen').style.display = 'none';
             document.getElementById('next-btn').style.display = 'none';
             showQuestion();
@@ -545,10 +536,8 @@
             const q = quizQuestions[currentQuestionIndex];
             document.getElementById('quiz-progress').innerHTML = `Song Question ${currentQuestionIndex + 1} of ${quizQuestions.length}`;
             document.getElementById('question').innerHTML = q.q;
-            
             const optionsDiv = document.getElementById('options');
             optionsDiv.innerHTML = '';
-            
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -556,7 +545,6 @@
                 btn.onclick = () => checkAnswer(opt);
                 optionsDiv.appendChild(btn);
             });
-            
             document.getElementById('feedback').innerHTML = '';
             document.getElementById('next-btn').style.display = 'none';
         }
@@ -565,7 +553,6 @@
             const q = quizQuestions[currentQuestionIndex];
             const feedback = document.getElementById('feedback');
             const isCorrect = selected === q.answer;
-            
             if (isCorrect) {
                 score++;
                 feedback.innerHTML = `🎉 Yay! Perfect note!`;
@@ -577,13 +564,11 @@
                 feedback.style.color = '#FF6B6B';
                 speak(`The correct answer is ${q.answer}`);
             }
-            
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.disabled = true;
                 if (btn.textContent === q.answer) btn.style.background = '#4ECDC4';
                 if (btn.textContent === selected && !isCorrect) btn.style.background = '#FF6B6B';
             });
-            
             document.getElementById('next-btn').style.display = 'inline-block';
         }
 
@@ -603,7 +588,6 @@
             else if (percent >= 80) message = '🌟 Rock star level!';
             else if (percent >= 60) message = '🎶 Great jam!';
             else message = '🎵 Keep singing, superstar!';
-            
             document.getElementById('final-score').innerHTML = `
                 ${message}<br>
                 You got <strong>${score}</strong> out of <strong>${quizQuestions.length}</strong> correct!<br>
@@ -618,19 +602,8 @@
         function restartQuiz() {
             startQuiz();
         }
-<button class="nav-btn" onclick="showSection('suno')">🎧 Make a Song!</button>
-        <!-- SUNO AI SONG GENERATOR -->
-<div id="suno" class="section">
-    <h2 style="text-align:center; font-size:3rem; margin-bottom:30px;">🎵 Create Your Own Learning Song with AI!</h2>
-    <div style="max-width:700px; margin:0 auto; background:white; padding:30px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1);">
-        <textarea id="userPrompt" placeholder="Tell me what song you want! Example: fun ABC song about colors and animals" rows="4" style="width:100%; padding:15px; font-size:1.3rem; border-radius:15px; border:2px solid #FFD93D;"></textarea>
-        <button class="big" onclick="createCustomSong()" style="margin-top:20px; background:#FF6B6B; color:white;">Make My Song! 🎤✨</button>
-        <div id="songStatus" style="margin:25px 0; font-size:1.6rem; text-align:center; min-height:60px;"></div>
-        <audio id="songPlayer" controls style="width:100%; margin-top:20px; display:none;"></audio>
-        <div id="lyricsDisplay" style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:15px; display:none; white-space:pre-wrap;"></div>
-    </div>
-</div>
-        // Confetti explosion
+
+        // Confetti explosion (unchanged)
         function launchConfetti() {
             const canvas = document.getElementById('confetti');
             canvas.width = window.innerWidth;
@@ -638,7 +611,6 @@
             const ctx = canvas.getContext('2d');
             const colors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#6C5CE7', '#FF9FF3'];
             let particles = [];
-            
             class Particle {
                 constructor() {
                     this.x = Math.random() * canvas.width;
@@ -648,10 +620,7 @@
                     this.color = colors[Math.floor(Math.random() * colors.length)];
                     this.angle = Math.random() * 360;
                 }
-                update() {
-                    this.y += this.speed;
-                    this.angle += 8;
-                }
+                update() { this.y += this.speed; this.angle += 8; }
                 draw() {
                     ctx.save();
                     ctx.translate(this.x, this.y);
@@ -661,11 +630,7 @@
                     ctx.restore();
                 }
             }
-            
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
-            }
-            
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
             let frame = 0;
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -682,10 +647,149 @@
                 }
             }
             animate();
-            
-            setTimeout(() => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }, 5000);
+            setTimeout(() => ctx.clearRect(0, 0, canvas.width, canvas.height), 5000);
+        }
+
+        // KIE / Suno AI integration
+        const API_BASE = 'https://api.kie.ai/api/v1/suno-api';
+        const API_KEY = '401313b4a8170b2b6ce60703d8aac122'; // ← SECURITY WARNING: Remove before pushing to public repo
+
+        async function createCustomSong() {
+            const userInput = document.getElementById('userPrompt').value.trim();
+            if (!userInput) {
+                alert("Please describe your song idea!");
+                return;
+            }
+
+            const status = document.getElementById('songStatus');
+            const player = document.getElementById('songPlayer');
+            const lyricsDiv = document.getElementById('lyricsDisplay');
+
+            status.innerHTML = "Generating kid-friendly lyrics... 📝 (30-90 sec)";
+            player.style.display = 'none';
+            lyricsDiv.style.display = 'none';
+            lyricsDiv.innerHTML = '';
+
+            try {
+                // Step 1: Generate lyrics
+                const lyricsRes = await fetch(`${API_BASE}/generate-lyrics`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: `Create simple, rhyming, educational children's song lyrics about: ${userInput}. Fun, positive, easy for ages 3-7, include chorus, short (1-2 verses).`
+                    })
+                });
+
+                if (!lyricsRes.ok) {
+                    const errText = await lyricsRes.text();
+                    throw new Error(`Lyrics request failed: ${lyricsRes.status} - ${errText}`);
+                }
+
+                const lyricsInit = await lyricsRes.json();
+                const lyricsTaskId = lyricsInit?.data?.taskId;
+                if (!lyricsTaskId) throw new Error("No lyrics task ID received");
+
+                status.innerHTML = "Lyrics task started... waiting for completion...";
+
+                // Poll for lyrics
+                let lyricsText = '';
+                let attempts = 0;
+                while (attempts < 40) {
+                    attempts++;
+                    const pollRes = await fetch(`${API_BASE}/get-lyrics-details`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ taskId: lyricsTaskId })
+                    });
+
+                    const pollData = await pollRes.json();
+
+                    if (pollData?.code === 200 && pollData?.data?.status === 'complete' && pollData?.data?.lyrics) {
+                        lyricsText = typeof pollData.data.lyrics === 'string' 
+                            ? pollData.data.lyrics 
+                            : JSON.stringify(pollData.data.lyrics, null, 2);
+                        break;
+                    } else if (pollData?.data?.status === 'failed') {
+                        throw new Error("Lyrics failed: " + (pollData.data.errorMessage || 'unknown error'));
+                    }
+
+                    await new Promise(r => setTimeout(r, 6000));
+                }
+
+                if (!lyricsText) throw new Error("Lyrics generation timed out");
+
+                lyricsDiv.innerHTML = `<strong>Generated Lyrics:</strong><br><pre>${lyricsText}</pre>`;
+                lyricsDiv.style.display = 'block';
+
+                status.innerHTML = "Lyrics ready! Now creating the full song... 🎶 (1-3 min)";
+
+                // Step 2: Generate music
+                const musicRes = await fetch(`${API_BASE}/generate-music`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: lyricsText,
+                        style: "upbeat children's educational pop, nursery rhyme, fun bouncy melody, simple instruments, kid vocals",
+                        title: "Song School AI Custom Song",
+                        model: "V5",
+                        custom: true,
+                        make_instrumental: false
+                    })
+                });
+
+                if (!musicRes.ok) throw new Error(`Music request failed: ${musicRes.status}`);
+
+                const musicInit = await musicRes.json();
+                const musicTaskId = musicInit?.data?.taskId;
+                if (!musicTaskId) throw new Error("No music task ID received");
+
+                let audioUrl = '';
+                let musicAttempts = 0;
+                while (musicAttempts < 80) {
+                    musicAttempts++;
+                    const musicPollRes = await fetch(`${API_BASE}/get-task-detail`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ taskId: musicTaskId })
+                    });
+
+                    const musicPoll = await musicPollRes.json();
+
+                    if (musicPoll?.code === 200 && musicPoll?.data?.status === 'complete' && musicPoll?.data?.audio_url) {
+                        audioUrl = musicPoll.data.audio_url;
+                        break;
+                    }
+
+                    await new Promise(r => setTimeout(r, 10000));
+                }
+
+                if (audioUrl) {
+                    player.src = audioUrl;
+                    player.style.display = 'block';
+                    player.play().catch(e => console.log("Autoplay blocked:", e));
+                    status.innerHTML = "Your song is ready! 🎉 Sing & dance along!";
+                    speak("Your custom song is playing now! Have fun!");
+                } else {
+                    status.innerHTML = "Song task finished but no audio link yet. Check console or try again.";
+                    console.log("Final music poll:", musicPoll);
+                }
+
+            } catch (err) {
+                status.innerHTML = `Error: ${err.message}<br>Possible fixes: Check credits at kie.ai, API key validity, or simplify request.`;
+                console.error("Song creation error:", err);
+            }
         }
 
         // Init
@@ -698,6 +802,7 @@
             setTimeout(() => {
                 speak("Welcome to Song School AI! Let's sing and learn together!");
             }, 800);
+            console.log("Song School AI loaded — try the 'Make a Song!' tab!");
         };
 
         window.addEventListener('resize', () => {
@@ -707,139 +812,6 @@
                 canvas.height = window.innerHeight;
             }
         });
-        const API_BASE = 'https://api.kie.ai/api/v1';  // KIE base URL (confirmed from docs)
-const API_KEY = 401313b4a8170b2b6ce60703d8aac122;       // ← Replace this with your actual key from https://kie.ai/api-key
-
-async function createCustomSong() {
-    const userInput = document.getElementById('userPrompt').value.trim();
-    if (!userInput) {
-        alert("Tell me what kind of song you want!");
-        return;
-    }
-
-    const status = document.getElementById('songStatus');
-    const player = document.getElementById('songPlayer');
-    const lyricsDiv = document.getElementById('lyricsDisplay');
-
-    status.innerHTML = "Creating fun kids lyrics first... 📝";
-    player.style.display = 'none';
-    lyricsDiv.style.display = 'none';
-
-    try {
-        // Step 1: Generate lyrics (using KIE's /lyrics endpoint)
-        const lyricsRes = await fetch(`${API_BASE}/lyrics`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                prompt: `Create simple, rhyming, educational children's song lyrics about: ${userInput}. Make it fun, positive, easy for ages 3-7 to sing along. Include chorus. Keep short (2 verses max).`
-            })
-        });
-
-        if (!lyricsRes.ok) throw new Error(`Lyrics API error: ${lyricsRes.status} - ${await lyricsRes.text()}`);
-
-        const lyricsData = await lyricsRes.json();
-        const taskId = lyricsData?.data?.taskId;
-
-        if (!taskId) throw new Error("No task ID returned for lyrics");
-
-        // Poll for lyrics completion (KIE lyrics are async)
-        let lyrics = '';
-        let attempts = 0;
-        while (attempts < 30) {  // Max ~2-3 min wait
-            attempts++;
-            const detailsRes = await fetch(`${API_BASE}/lyrics/record-info`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${API_KEY}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ taskId })
-            });
-            const details = await detailsRes.json();
-
-            if (details?.data?.status === 'completed' && details?.data?.lyrics) {
-                lyrics = details.data.lyrics;  // Adjust field if needed (may be structured)
-                break;
-            } else if (details?.data?.status === 'failed') {
-                throw new Error("Lyrics generation failed");
-            }
-            await new Promise(r => setTimeout(r, 6000));  // Wait 6s between polls
-        }
-
-        if (!lyrics) throw new Error("Lyrics took too long or failed");
-
-        lyricsDiv.innerHTML = `<strong>Your Song Lyrics:</strong>\n\n${lyrics}`;
-        lyricsDiv.style.display = 'block';
-
-        status.innerHTML = "Lyrics ready! Now generating the full song... 🎶 (may take 1-2 min)";
-
-        // Step 2: Generate music with custom lyrics
-        const musicRes = await fetch(`${API_BASE}/generate-music`, {  // or /suno-api/generate-music if namespaced
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                custom: true,                // or customMode: true
-                prompt: lyrics,              // lyrics as prompt in custom mode
-                style: "upbeat children's educational song, nursery rhyme, fun and bouncy, simple instruments",
-                title: "Kiddo Song",
-                model: "V5",                 // or latest available
-                make_instrumental: false
-            })
-        });
-
-        if (!musicRes.ok) throw new Error(`Music API error: ${musicRes.status}`);
-
-        const musicData = await musicRes.json();
-        const musicTaskId = musicData?.data?.taskId;
-
-        if (musicTaskId) {
-            // Poll for music (similar to lyrics)
-            let audioUrl = '';
-            let musicAttempts = 0;
-            while (musicAttempts < 60) {
-                musicAttempts++;
-                const musicDetailsRes = await fetch(`${API_BASE}/get-task-detail`, {  // common polling endpoint
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ taskId: musicTaskId })
-                });
-                const musicDetails = await musicDetailsRes.json();
-
-                if (musicDetails?.data?.status === 'completed' && musicDetails?.data?.audio_url) {
-                    audioUrl = musicDetails.data.audio_url;
-                    break;
-                }
-                await new Promise(r => setTimeout(r, 10000));  // 10s poll
-            }
-
-            if (audioUrl) {
-                player.src = audioUrl;
-                player.style.display = 'block';
-                player.play();
-                status.innerHTML = "Your custom song is ready! Sing along! 🎉";
-                speak("Wow, your new song is playing!");
-            } else {
-                status.innerHTML = "Song generated but audio not ready yet — try refreshing.";
-            }
-        } else {
-            status.innerHTML = "Check console for music details.";
-            console.log(musicData);
-        }
-
-    } catch (err) {
-        status.innerHTML = `Error: ${err.message}<br>Check your API key, credits, or try a simpler request.`;
-        console.error(err);
-    }
-}
     </script>
 </body>
 </html>
